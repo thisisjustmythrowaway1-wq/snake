@@ -299,6 +299,8 @@
             justify-content: center;
             margin-top: 30px;
             position: relative;
+            height: 80px;
+            align-items: center;
         }
 
         .yes-btn {
@@ -327,7 +329,7 @@
             border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             position: absolute;
         }
 
@@ -417,7 +419,7 @@
                 <p style="font-size: 1.2em; margin-top: 20px;">So what do you say? 💕</p>
                 <div class="button-container">
                     <button class="yes-btn" id="yesBtn" onclick="answerYes()">YES! 🎉</button>
-                    <button class="no-btn" id="noBtn" onclick="dodgeNo()">Maybe Later 😊</button>
+                    <button class="no-btn" id="noBtn" onmouseover="dodgeNo()" onclick="dodgeNo()">NO</button>
                 </div>
             </div>
         </div>
@@ -709,6 +711,7 @@
             if (answer === SECRET_MESSAGE) {
                 createBigConfetti();
                 showSection('victorySection');
+                resetButtons();
             } else {
                 const status = document.getElementById('status');
                 status.textContent = '❌ Not quite right! Try again.';
@@ -717,6 +720,16 @@
                     clearAnswer();
                 }, 1500);
             }
+        }
+
+        function resetButtons() {
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            
+            yesBtn.style.fontSize = '1.2em';
+            yesBtn.style.padding = '15px 40px';
+            noBtn.style.left = 'auto';
+            noBtn.style.top = 'auto';
         }
 
         function answerYes() {
@@ -729,16 +742,17 @@
             const yesBtn = document.getElementById('yesBtn');
             
             // Random position for no button
-            const randomX = Math.random() * 200 - 100;
-            const randomY = Math.random() * 200 - 100;
+            const randomX = (Math.random() * 300 - 150);
+            const randomY = (Math.random() * 100 - 50);
             
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
             
             // Make yes button bigger
             const currentSize = parseFloat(yesBtn.style.fontSize) || 1.2;
-            yesBtn.style.fontSize = (currentSize + 0.2) + 'em';
-            yesBtn.style.padding = (15 + currentSize * 5) + 'px ' + (40 + currentSize * 5) + 'px';
+            const newSize = currentSize + 0.3;
+            yesBtn.style.fontSize = newSize + 'em';
+            yesBtn.style.padding = (15 + (newSize - 1.2) * 15) + 'px ' + (40 + (newSize - 1.2) * 15) + 'px';
         }
 
         document.addEventListener('keydown', (e) => {
