@@ -110,6 +110,31 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .skip-btn {
+            padding: 10px 20px;
+            font-size: 0.9em;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .skip-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
         .game-over {
             display: none;
             margin-top: 20px;
@@ -139,6 +164,27 @@
             letter-spacing: 3px;
             color: #667eea;
             word-break: break-all;
+        }
+
+        .answer-display {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 60px;
+            font-size: 1.5em;
+            letter-spacing: 4px;
+            color: #333;
+            border: 2px dashed #ffc107;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .word-blank {
+            margin: 0 5px;
         }
 
         .letter-buttons {
@@ -176,19 +222,7 @@
             background: #667eea;
         }
 
-        .answer-display {
-            background: #fff9e6;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            min-height: 50px;
-            font-size: 1.3em;
-            letter-spacing: 2px;
-            color: #333;
-            border: 2px dashed #ffc107;
-        }
-
-        .button-group {
+        .unscramble-button-group {
             display: flex;
             gap: 10px;
             justify-content: center;
@@ -259,6 +293,44 @@
             margin-bottom: 15px;
         }
 
+        .button-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .yes-btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .yes-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .no-btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: absolute;
+        }
+
         .confetti {
             position: fixed;
             width: 10px;
@@ -301,7 +373,10 @@
                     <p id="gameStatus">Ready to start! Click the button below.</p>
                 </div>
 
-                <button onclick="startGame()">Start Game</button>
+                <div class="button-group">
+                    <button onclick="startGame()">Start Game</button>
+                    <button class="skip-btn" onclick="skipToUnscramble()">Skip Game</button>
+                </div>
 
                 <div class="game-over" id="gameOver">
                     <h2 id="gameOverTitle">Game Over!</h2>
@@ -319,11 +394,11 @@
                 
                 <p style="color: #666; margin-bottom: 15px;">Spell out the secret message:</p>
                 
-                <div class="answer-display" id="answerDisplay">Click letters to spell...</div>
+                <div class="answer-display" id="answerDisplay"></div>
 
                 <div class="letter-buttons" id="letterButtons"></div>
 
-                <div class="button-group">
+                <div class="unscramble-button-group">
                     <button class="undo-btn" onclick="undoLetter()">↶ Undo</button>
                     <button class="clear-btn" onclick="clearAnswer()">Clear</button>
                     <button onclick="submitAnswer()">Submit Answer</button>
@@ -338,11 +413,11 @@
             <div class="victory">
                 <h2>✨ Will You Be My Valentine? ✨</h2>
                 <p>You solved the puzzle! 🎉</p>
-                <p>I've liked you for a while now, and I thought this would be a fun way to ask...</p>
+                <p>I love you and I want to make this Valentine's Day special with you.</p>
                 <p style="font-size: 1.2em; margin-top: 20px;">So what do you say? 💕</p>
-                <div style="margin-top: 30px;">
-                    <button onclick="answerYes()" style="margin-right: 10px;">YES! 🎉</button>
-                    <button style="background: #6c757d;" onclick="answerNo()">Maybe Later 😊</button>
+                <div class="button-container">
+                    <button class="yes-btn" id="yesBtn" onclick="answerYes()">YES! 🎉</button>
+                    <button class="no-btn" id="noBtn" onclick="dodgeNo()">Maybe Later 😊</button>
                 </div>
             </div>
         </div>
@@ -356,6 +431,7 @@
         const TILE_COUNT_X = canvas.width / GRID_SIZE;
         const TILE_COUNT_Y = canvas.height / GRID_SIZE;
         const SECRET_MESSAGE = "WILLYOUBEMYVALENTINE";
+        const MESSAGE_WORDS = ["WILL", "YOU", "BE", "MY", "VALENTINE"];
 
         let snake = [{ x: 10, y: 10 }];
         let direction = { x: 1, y: 0 };
@@ -388,6 +464,18 @@
 
             clearInterval(gameLoopInterval);
             gameLoopInterval = setInterval(update, 100);
+        }
+
+        function skipToUnscramble() {
+            gameRunning = false;
+            clearInterval(gameLoopInterval);
+            collectedLetters = SECRET_MESSAGE.split('');
+            createConfetti();
+            
+            setTimeout(() => {
+                showSection('unscrambleSection');
+                initializeUnscramble();
+            }, 500);
         }
 
         function generateFoodItems() {
@@ -550,8 +638,20 @@
                 buttonContainer.appendChild(btn);
             });
 
-            document.getElementById('answerDisplay').textContent = 'Click letters to spell...';
+            displayAnswerBlanks();
             document.getElementById('status').style.display = 'none';
+        }
+
+        function displayAnswerBlanks() {
+            const answerDisplay = document.getElementById('answerDisplay');
+            answerDisplay.innerHTML = '';
+
+            MESSAGE_WORDS.forEach(word => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'word-blank';
+                wordDiv.textContent = '_ '.repeat(word.length).trim();
+                answerDisplay.appendChild(wordDiv);
+            });
         }
 
         function selectLetter(index, letter, btn) {
@@ -564,7 +664,28 @@
 
         function updateAnswerDisplay() {
             const answer = unscrambleState.answer.map(item => item.letter).join('');
-            document.getElementById('answerDisplay').textContent = answer || 'Click letters to spell...';
+            const answerDisplay = document.getElementById('answerDisplay');
+            answerDisplay.innerHTML = '';
+
+            let answerIndex = 0;
+            MESSAGE_WORDS.forEach(word => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'word-blank';
+                let wordDisplay = '';
+
+                for (let i = 0; i < word.length; i++) {
+                    if (answerIndex < answer.length) {
+                        wordDisplay += answer[answerIndex];
+                        answerIndex++;
+                    } else {
+                        wordDisplay += '_ ';
+                    }
+                    if (i < word.length - 1) wordDisplay += ' ';
+                }
+
+                wordDiv.textContent = wordDisplay;
+                answerDisplay.appendChild(wordDiv);
+            });
         }
 
         function undoLetter() {
@@ -579,7 +700,7 @@
         function clearAnswer() {
             unscrambleState.answer = [];
             document.querySelectorAll('.letter-btn').forEach(btn => btn.classList.remove('used'));
-            updateAnswerDisplay();
+            displayAnswerBlanks();
         }
 
         function submitAnswer() {
@@ -600,39 +721,24 @@
 
         function answerYes() {
             createBigConfetti();
-            alert('🎉 YESSSSS!!! I\'m so happy! You make me smile every day! 💕');
+            alert('🎉 YESSSSS!!! I\'m so happy! You\'re the best! 💕');
         }
 
-        function answerNo() {
-            alert('No worries! Maybe you\'ll change your mind soon 😊 Either way, you\'re amazing!');
-        }
-
-        function createConfetti() {
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.backgroundColor = ['#667eea', '#764ba2', '#ff1493', '#ff69b4'][Math.floor(Math.random() * 4)];
-                confetti.style.animation = `confettiFall ${2 + Math.random() * 1}s ease-out forwards`;
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 3000);
-            }
-        }
-
-        function createBigConfetti() {
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.width = (5 + Math.random() * 10) + 'px';
-                confetti.style.height = confetti.style.width;
-                confetti.innerHTML = ['💕', '💖', '✨', '🎉', '💝'][Math.floor(Math.random() * 5)];
-                confetti.style.backgroundColor = 'transparent';
-                confetti.style.fontSize = '20px';
-                confetti.style.animation = `confettiFall ${2 + Math.random() * 2}s ease-out forwards`;
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 4000);
-            }
+        function dodgeNo() {
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            
+            // Random position for no button
+            const randomX = Math.random() * 200 - 100;
+            const randomY = Math.random() * 200 - 100;
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            
+            // Make yes button bigger
+            const currentSize = parseFloat(yesBtn.style.fontSize) || 1.2;
+            yesBtn.style.fontSize = (currentSize + 0.2) + 'em';
+            yesBtn.style.padding = (15 + currentSize * 5) + 'px ' + (40 + currentSize * 5) + 'px';
         }
 
         document.addEventListener('keydown', (e) => {
@@ -661,6 +767,34 @@
                     break;
             }
         });
+
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = ['#667eea', '#764ba2', '#ff1493', '#ff69b4'][Math.floor(Math.random() * 4)];
+                confetti.style.animation = `confettiFall ${2 + Math.random() * 1}s ease-out forwards`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        function createBigConfetti() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.width = (5 + Math.random() * 10) + 'px';
+                confetti.style.height = confetti.style.width;
+                confetti.innerHTML = ['💕', '💖', '✨', '🎉', '💝'][Math.floor(Math.random() * 5)];
+                confetti.style.backgroundColor = 'transparent';
+                confetti.style.fontSize = '20px';
+                confetti.style.animation = `confettiFall ${2 + Math.random() * 2}s ease-out forwards`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
 
         draw();
     </script>
