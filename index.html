@@ -46,6 +46,76 @@
             display: block;
         }
 
+        /* Intro Modal */
+        .intro-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .intro-modal.active {
+            display: flex;
+        }
+
+        .intro-content {
+            text-align: center;
+            color: white;
+        }
+
+        .intro-emoji {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .intro-content h1 {
+            font-size: 3em;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .intro-content p {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .intro-button {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .intro-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
         /* Quiz Modal */
         .quiz-modal {
             display: none;
@@ -160,13 +230,6 @@
             border-color: #dc3545;
         }
 
-        .quiz-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
         .quiz-btn {
             padding: 12px 30px;
             font-size: 1em;
@@ -222,9 +285,10 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
+            background-color: rgba(0, 0, 0, 0.9);
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
         .video-modal.active {
@@ -235,12 +299,15 @@
             width: 90%;
             max-width: 900px;
             aspect-ratio: 16 / 9;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         .video-container iframe {
             width: 100%;
             height: 100%;
-            border-radius: 10px;
+            border: none;
         }
 
         /* Game Area */
@@ -549,8 +616,19 @@
     </style>
 </head>
 <body>
+    <!-- Intro Modal -->
+    <div class="intro-modal active" id="introModal">
+        <div class="intro-content">
+            <div class="intro-emoji">💕</div>
+            <h1>Hey! 👋</h1>
+            <p>You're about to experience something special... 🌟</p>
+            <p style="font-size: 1.1em; margin-top: 30px;">So... are you ready? 😏</p>
+            <button class="intro-button" onclick="skipIntro()">Let's Go! 🚀</button>
+        </div>
+    </div>
+
     <!-- Quiz Modal -->
-    <div class="quiz-modal active" id="quizModal">
+    <div class="quiz-modal" id="quizModal">
         <div class="quiz-content">
             <!-- Welcome Screen -->
             <div class="quiz-welcome" id="quizWelcome">
@@ -684,6 +762,11 @@
     </div>
 
     <script>
+        function skipIntro() {
+            document.getElementById('introModal').classList.remove('active');
+            document.getElementById('quizModal').classList.add('active');
+        }
+
         // Quiz Data
         const quizQuestions = [
             {
@@ -704,12 +787,12 @@
             {
                 question: "Where did we meet?",
                 options: ["School", "Online", "Work", "Friend's house"],
-                correct: 1 // You'll need to replace this with actual answer index
+                correct: 1
             },
             {
                 question: "What's our favorite game?",
                 options: ["Roblox", "Fortnite", "Minecraft", "VRChat"],
-                correct: -1 // All correct (trick question)
+                correct: -1
             }
         ];
 
@@ -723,15 +806,12 @@
         }
 
         function showQuestion(index) {
-            // Hide all questions
             for (let i = 0; i < 5; i++) {
                 document.getElementById(`question${i}`).classList.remove('active');
             }
 
-            // Show current question
             document.getElementById(`question${index}`).classList.add('active');
 
-            // Create options
             const optionsContainer = document.getElementById(`options${index}`);
             optionsContainer.innerHTML = '';
 
@@ -747,7 +827,6 @@
         function selectOption(questionIndex, optionIndex) {
             selectedAnswers[questionIndex] = optionIndex;
 
-            // Update UI
             const options = document.querySelectorAll(`#options${questionIndex} .quiz-option`);
             options.forEach((opt, i) => {
                 opt.classList.remove('selected', 'correct', 'incorrect');
@@ -756,7 +835,6 @@
                 }
             });
 
-            // Check answer
             const question = quizQuestions[questionIndex];
             const feedback = document.getElementById(`feedback${questionIndex}`);
             const nextBtn = document.getElementById(`nextBtn${questionIndex}`) || document.getElementById('finishBtn');
