@@ -46,6 +46,174 @@
             display: block;
         }
 
+        /* Quiz Modal */
+        .quiz-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quiz-modal.active {
+            display: flex;
+        }
+
+        .quiz-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .quiz-welcome {
+            display: block;
+        }
+
+        .quiz-welcome.hidden {
+            display: none;
+        }
+
+        .quiz-question-container {
+            display: none;
+        }
+
+        .quiz-question-container.active {
+            display: block;
+        }
+
+        .quiz-welcome h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .quiz-welcome p {
+            color: #555;
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .quiz-question-container h3 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 25px;
+        }
+
+        .quiz-progress {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-option {
+            padding: 15px;
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            text-align: left;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .quiz-option:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .quiz-option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .quiz-option.correct {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .quiz-option.incorrect {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .quiz-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .quiz-btn {
+            padding: 12px 30px;
+            font-size: 1em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .quiz-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quiz-feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .quiz-feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .quiz-feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Game Area */
         .game-area {
             display: flex;
             flex-direction: column;
@@ -351,6 +519,59 @@
     </style>
 </head>
 <body>
+    <!-- Quiz Modal -->
+    <div class="quiz-modal active" id="quizModal">
+        <div class="quiz-content">
+            <!-- Welcome Screen -->
+            <div class="quiz-welcome" id="quizWelcome">
+                <h2>🔐 HOLD ON!</h2>
+                <p>This is for <strong>TV ONLY</strong>, please pass this quiz to verify you're either <strong>T or V!</strong></p>
+                <button class="quiz-btn" onclick="startQuiz()">Start Quiz →</button>
+            </div>
+
+            <!-- Question Screens -->
+            <div class="quiz-question-container" id="question0">
+                <div class="quiz-progress">Question 1/5</div>
+                <h3>What color toad was T?</h3>
+                <div class="quiz-options" id="options0"></div>
+                <div class="quiz-feedback" id="feedback0"></div>
+                <button class="quiz-btn" id="nextBtn0" onclick="nextQuestion(0)" disabled>Next →</button>
+            </div>
+
+            <div class="quiz-question-container" id="question1">
+                <div class="quiz-progress">Question 2/5</div>
+                <h3>How long have we been dating?</h3>
+                <div class="quiz-options" id="options1"></div>
+                <div class="quiz-feedback" id="feedback1"></div>
+                <button class="quiz-btn" id="nextBtn1" onclick="nextQuestion(1)" disabled>Next →</button>
+            </div>
+
+            <div class="quiz-question-container" id="question2">
+                <div class="quiz-progress">Question 3/5</div>
+                <h3>What is V's ideal gift?</h3>
+                <div class="quiz-options" id="options2"></div>
+                <div class="quiz-feedback" id="feedback2"></div>
+                <button class="quiz-btn" id="nextBtn2" onclick="nextQuestion(2)" disabled>Next →</button>
+            </div>
+
+            <div class="quiz-question-container" id="question3">
+                <div class="quiz-progress">Question 4/5</div>
+                <h3>Where did we meet?</h3>
+                <div class="quiz-options" id="options3"></div>
+                <div class="quiz-feedback" id="feedback3"></div>
+                <button class="quiz-btn" id="nextBtn3" onclick="nextQuestion(3)" disabled>Next →</button>
+            </div>
+
+            <div class="quiz-question-container" id="question4">
+                <div class="quiz-progress">Question 5/5</div>
+                <h3>What's our favorite game?</h3>
+                <div class="quiz-options" id="options4"></div>
+                <div class="quiz-feedback" id="feedback4"></div>
+                <button class="quiz-btn" id="finishBtn" onclick="finishQuiz()">Finish Quiz →</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <h1>🐍 Snake Game</h1>
         
@@ -426,6 +647,113 @@
     </div>
 
     <script>
+        // Quiz Data
+        const quizQuestions = [
+            {
+                question: "What color toad was T?",
+                options: ["Red", "Blue", "Green", "Yellow"],
+                correct: 1
+            },
+            {
+                question: "How long have we been dating?",
+                options: ["1 year", "2 years", "3 years", "6 months"],
+                correct: 1
+            },
+            {
+                question: "What is V's ideal gift?",
+                options: ["VTuber assets/art", "Money", "Time with T", "Car"],
+                correct: 2
+            },
+            {
+                question: "Where did we meet?",
+                options: ["School", "Online", "Work", "Friend's house"],
+                correct: 1 // You'll need to replace this with actual answer index
+            },
+            {
+                question: "What's our favorite game?",
+                options: ["Roblox", "Fortnite", "Minecraft", "VRChat"],
+                correct: -1 // All correct (trick question)
+            }
+        ];
+
+        let currentQuestion = 0;
+        let selectedAnswers = new Array(5).fill(-1);
+        let quizPassed = false;
+
+        function startQuiz() {
+            document.getElementById('quizWelcome').classList.add('hidden');
+            showQuestion(0);
+        }
+
+        function showQuestion(index) {
+            // Hide all questions
+            for (let i = 0; i < 5; i++) {
+                document.getElementById(`question${i}`).classList.remove('active');
+            }
+
+            // Show current question
+            document.getElementById(`question${index}`).classList.add('active');
+
+            // Create options
+            const optionsContainer = document.getElementById(`options${index}`);
+            optionsContainer.innerHTML = '';
+
+            quizQuestions[index].options.forEach((option, optionIndex) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option';
+                btn.textContent = option;
+                btn.onclick = () => selectOption(index, optionIndex);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            selectedAnswers[questionIndex] = optionIndex;
+
+            // Update UI
+            const options = document.querySelectorAll(`#options${questionIndex} .quiz-option`);
+            options.forEach((opt, i) => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+                if (i === optionIndex) {
+                    opt.classList.add('selected');
+                }
+            });
+
+            // Check answer
+            const question = quizQuestions[questionIndex];
+            const feedback = document.getElementById(`feedback${questionIndex}`);
+            const nextBtn = document.getElementById(`nextBtn${questionIndex}`) || document.getElementById('finishBtn');
+
+            if (question.correct === -1 || optionIndex === question.correct) {
+                feedback.textContent = '✅ Correct!';
+                feedback.classList.add('show', 'correct');
+                options[optionIndex].classList.add('correct');
+                nextBtn.disabled = false;
+            } else {
+                feedback.textContent = '❌ Wrong answer, try again!';
+                feedback.classList.add('show', 'incorrect');
+                options[optionIndex].classList.add('incorrect');
+                nextBtn.disabled = true;
+            }
+        }
+
+        function nextQuestion(index) {
+            if (index < 4) {
+                currentQuestion = index + 1;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function finishQuiz() {
+            quizPassed = true;
+            closeQuiz();
+        }
+
+        function closeQuiz() {
+            document.getElementById('quizModal').classList.remove('active');
+        }
+
+        // Game Code
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         
@@ -514,7 +842,6 @@
                 y: (head.y + direction.y + TILE_COUNT_Y) % TILE_COUNT_Y
             };
 
-            // Check collision with self
             if (snake.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
                 endGame();
                 return;
@@ -522,7 +849,6 @@
 
             snake.unshift(newHead);
 
-            // Check if food eaten
             const foodIndex = foodItems.findIndex(f => f.x === newHead.x && f.y === newHead.y);
             if (foodIndex !== -1) {
                 const letter = foodItems[foodIndex].letter;
@@ -544,11 +870,9 @@
         }
 
         function draw() {
-            // Clear canvas
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw grid
             ctx.strokeStyle = '#111';
             ctx.lineWidth = 0.5;
             for (let i = 0; i <= canvas.width; i += GRID_SIZE) {
@@ -564,7 +888,6 @@
                 ctx.stroke();
             }
 
-            // Draw snake
             snake.forEach((segment, index) => {
                 ctx.fillStyle = index === 0 ? '#00ff00' : '#00cc00';
                 ctx.fillRect(
@@ -575,7 +898,6 @@
                 );
             });
 
-            // Draw food with letters
             foodItems.forEach(food => {
                 ctx.fillStyle = '#ff6b6b';
                 ctx.fillRect(
@@ -741,14 +1063,12 @@
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
             
-            // Random position for no button
             const randomX = (Math.random() * 300 - 150);
             const randomY = (Math.random() * 100 - 50);
             
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
             
-            // Make yes button bigger
             const currentSize = parseFloat(yesBtn.style.fontSize) || 1.2;
             const newSize = currentSize + 0.3;
             yesBtn.style.fontSize = newSize + 'em';
