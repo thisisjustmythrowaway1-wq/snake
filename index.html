@@ -213,6 +213,36 @@
             border: 1px solid #f5c6cb;
         }
 
+        /* Video Modal */
+        .video-modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-modal.active {
+            display: flex;
+        }
+
+        .video-container {
+            width: 90%;
+            max-width: 900px;
+            aspect-ratio: 16 / 9;
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
         /* Game Area */
         .game-area {
             display: flex;
@@ -569,6 +599,13 @@
                 <div class="quiz-feedback" id="feedback4"></div>
                 <button class="quiz-btn" id="finishBtn" onclick="finishQuiz()">Finish Quiz →</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/pwzboBhj1UQ?si=_v46sgJIhmoDUGD5" title="YouTube video" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
         </div>
     </div>
 
@@ -1056,7 +1093,7 @@
 
         function answerYes() {
             createBigConfetti();
-            alert('🎉 YESSSSS!!! I\'m so happy! You\'re the best! 💕');
+            document.getElementById('videoModal').classList.add('active');
         }
 
         function dodgeNo() {
